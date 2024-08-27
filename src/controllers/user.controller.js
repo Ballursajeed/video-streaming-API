@@ -21,10 +21,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
      if (exitedUser) {
         throw new ApiError(409, "User with email or username already exist")
-     }
-
-     console.log(req.files);
-     
+     }     
 
      const avatarLocalPath = req.files?.avatar[0]?.path  // grab the avatar 
      //const coverImageLocalPath =   // grab the coverImage 
@@ -97,7 +94,7 @@ const loginUser = asyncHandler(async (req,res) => {
 
         if(username === "" || password === "") {
             throw new ApiError(400, "Username or password is required")
-        }
+        }        
 
         const user = await User.findOne({username})
 
@@ -134,10 +131,11 @@ const loginUser = asyncHandler(async (req,res) => {
 })
 
 const logoutUser = asyncHandler(async (req,res) => {
+ 
     await User.findByIdAndUpdate(
         req.user._id,{
             $set: {
-                refreshToken: undefined
+                refreshToken: ""
             }
         },
         {
