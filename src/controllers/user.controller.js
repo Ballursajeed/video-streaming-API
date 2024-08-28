@@ -265,7 +265,7 @@ const updateUserAvatar = asyncHandler(async(req,res) => {
 
     const avatar = await uploadOnCloudinary(avatarLocalPath)
 
-    if (!avatar) {
+    if (!avatar.url) {
         throw new ApiError(500, "Error while uploading on Avatar")
     }
 
@@ -273,7 +273,7 @@ const updateUserAvatar = asyncHandler(async(req,res) => {
         req.user?._id,
         {
             $set:{
-                avatar
+                avatar: avatar.url
             }
         },
         {
@@ -285,7 +285,7 @@ const updateUserAvatar = asyncHandler(async(req,res) => {
     return res
     .status(200)
     .json(
-        new ApiResponse(200, {}, "Avatar is updated Successfully!")
+        new ApiResponse(200, { user }, "Avatar is updated Successfully!")
     )
 
 })
@@ -294,35 +294,34 @@ const updateUserCoverImage = asyncHandler(async(req,res) => {
     const coverImageLocalPath = req.file?.path
 
     if (!coverImageLocalPath) {
-        throw new ApiError(400, "cover Image is required")
+        throw new ApiError(400, "Cover Image is required")
     }
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath)
 
-    if(!coverImage) {
-        throw new ApiError(500, "Error while uploading the image!!")
+    if(!coverImage.url) {
+        throw new ApiError(500, "Error while uploading the Cover image!!")
     }
 
     const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
            $set:{
-            coverImage
+            coverImage:coverImage.url
            }
         },
         {
              new : true
         }
-    )
+    ).select("-password")
 
     return res
     .status(200)
     .json(
-        new ApiResponse(200, "Cover Image is updated Successfully!!")
+        new ApiResponse(200,{ user }, "Cover Image is updated Successfully!!")
     )
 
 })
-
 
 export { 
     registerUser,
@@ -332,5 +331,6 @@ export {
     changeCurrentPassword,
     getCurrentUser,
     updateUserAvatar,
-    updateAccountDetails
+    updateAccountDetails,
+    updateUserCoverImage
  }
