@@ -1,4 +1,4 @@
-import mongoose, { Mongoose, Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const commentSchema = new mongoose.Schema(
