@@ -237,6 +237,14 @@ const updateAccountDetails = asyncHandler(async(req,res) => {
         throw new ApiError(400, "All fields are required!")
     }
 
+    const exitedUser = await User.findOne({ 
+        email 
+     })
+
+     if (exitedUser) {
+        throw new ApiError(409, "User with email already exist")
+     }     
+
      const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
@@ -362,7 +370,7 @@ const getUserChannelProfile = asyncHandler(async(req,res) => {
                     $size:"$subscribeTo"
                 },
                 isSubscribed: {
-                    $condiition:{
+                    $cond:{
                         if: {$in: [ req.user?._id, "$subscribers.subscriber" ]},
                         then: true,
                         else: false
