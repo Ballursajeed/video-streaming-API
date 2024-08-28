@@ -136,8 +136,8 @@ const logoutUser = asyncHandler(async (req,res) => {
  
     await User.findByIdAndUpdate(
         req.user._id,{
-            $set: {
-                refreshToken: ""
+            $unset: {
+                refreshToken: 1
             }
         },
         {
@@ -204,8 +204,8 @@ const refreshAccessToken = asyncHandler(async (req,res) => {
 const changeCurrentPassword = asyncHandler(async (req,res) => {
     const { oldPassword, newPassword } = req.body;
 
-    const user = await User.findById(req.user?._d)
-
+    const user = await User.findById(req.user?._id)    
+  
     const isMatch = await user.isPasswordCorrect(oldPassword)
 
     if (!isMatch) {
